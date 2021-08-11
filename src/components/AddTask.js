@@ -44,7 +44,7 @@ const addNewTask = (currentTask) =>{
 
 const addTarea = e => {
   const {value} = e.target;
-    if(e.key === "Enter" && e.target.value !== "" && task !== ""){
+    if(e.key === "Enter" && value !== "" && task !== ""){
         let currentTask = {
           "label": value,
           "done": false
@@ -109,7 +109,7 @@ const deleteTask = indexArray => {
     <div className="row" >
     <div className="col-6 mx-auto mt-2" id="taskcontainer">
         <ul className="list-group">
-          {task === null ? "Espere un momento" : task.map((item, index) => {
+          {!!task && task.map((item, index) => {
             return (
         <li className="row list-group-item d-inline-flex align-items-center" id={index} key={index}>
           <div className="col-10">{item.label}</div>
