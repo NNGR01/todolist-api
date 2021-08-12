@@ -1,128 +1,119 @@
 import React, { useEffect, useState } from 'react';
 
-
 const AddTask = () => {
-    
- const { task, setTask } = useState(null);
 
- useEffect (() => {
-  const createTask = () => {
-    fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR01',{
-      method:'POST',
-      body: JSON.stringify([]),
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const { task, setTask } = useState(null);
 
+  useEffect(() => {
+
+    const getTask = () => {
+      fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR',{
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(resp => resp.json())
+      .then(data =>  data.msg ? createUser() : setTask(data))
+      .catch(error => console.log(error))
+}
+   getTask();
+},[])
+
+useEffect( () => {
+
+  const putTask = () =>{
+    fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR',{
+      method: 'PUT',
+      body: JSON.stringify(task),
+      headers:{
+        "Content-Type": "application/json"
+      }
     })
-    .then(resp => resp.json())
-    .then(data => setTask(data))
-    .catch(error => console.log(error))
-  }
-  const getTask = () => {
-    fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR01')
-    .then ( resp => resp.json())
-    .then ( data => {data.msg ? createTask() : setTask(data)})
+    .then( resp => resp.json())
+    .then(data => console.log(data))
     .catch( error => console.log(error))
   }
-  getTask();
- },[])
-
-const addNewTask = (currentTask) =>{
-  fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR01',{
-      method:'POST',
-      body: JSON.stringify(currentTask),
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-    })
-    .then(resp => resp.json())
-    .then(data => console.log(data))
-    .catch(error => console.log("echale un ojo a..." + error ))
-} 
-
-const addTarea = e => {
-  const {value} = e.target;
-    if(e.key === "Enter" && value !== "" && task !== ""){
-        let currentTask = {
-          "label": value,
-          "done": false
-        }
-        setTask([...task, currentTask])
-        e.target.value = "";
-        addNewTask(task)
-
-        }
-       
-}
-const deleteTask = indexArray => {
-  let newTasks = [];
-  task.map((item,index) => {
-    if(index !== indexArray){
-      newTasks.push(item)
-    }
-    return newTasks;
-  })   
-    setTask(newTasks)
- }
-
- const deleteAll = () =>{
-   const deleteAllTask = () => {
-       fetch("https://assets.breatheco.de/apis/fake/todos/NNGR01", {
-         method: "DELETE",
-         headers: {
-           "Content-Type": "application/json",
-         },
-       })
-         .then((resp) => {
-           console.log(resp.ok);
-           console.log(resp.status);
-           console.log(resp.text());
-           return resp.json();
-         })
-         .then((data) => {
-           console.log(data);
-         })
-         .catch((error) => {
-           console.log(error);
-         });
-     };
-     deleteAllTask();
-     setTask([])
- }
-
-
-
+  putTask();
+},[task])
  
+const createUser = () => {
+  fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR',{
+    method: 'POST',
+    body: JSON.stringify([]),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then( resp => resp.json())
+  .then(data => setTask(data))
+  .catch(error => console.log(error))
+}
+
+function addTarea(e){
+  if(e.key === "Enter" && e.target.value !== "" && task !== ""){
+    let nT = [...task];
+    let nE = {
+      lable: e.target.value,
+      done: false
+    }
+   let nTask = nT.concat(nE);
+       setTask(nTask);
+       e.target.value = "";
+  }
+}
+function deleteTask(e){
+  let taskUpdate = [];
+  task.map((elem, index) => {
+    if(index !== e){
+      taskUpdate.push(elem)
+    }
+    return taskUpdate
+  })
+  setTask(taskUpdate)
+}
+
+function deleteAll(){
+  const deleteAllTask = () => {
+    fetch('https://assets.breatheco.de/apis/fake/todos/user/NNGR',{
+      method: 'DETELE',
+      headers:{
+        "Content-Type": "application/json"
+      }
+    })
+    .then( resp => resp.json())
+    .then (data => console.log(data))
+    .catch(error => console.log(error))
+  }
+  deleteAllTask();
+  setTask([])
+}
 
 
+return (
 
-  return (
-      <>
-    <div className="row">
-      <div className="col-md-6 mx-auto">
-        <input className="col-md-12 mx-auto" placeholder="nueva tarea" onKeyUp={addTarea} />
-      </div>
-    </div>
-
-    <div className="row" >
-    <div className="col-6 mx-auto mt-2" id="taskcontainer">
-        <ul className="list-group">
-          {!!task && task.map((item, index) => {
-            return (
-        <li className="row list-group-item d-inline-flex align-items-center" id={index} key={index}>
-          <div className="col-10">{item.label}</div>
-<button type="button" className="btn btn-warning" onClick={() => deleteTask(index)}>Delete All Tasks</button>
-          </li>
-
-            )
-          })}
-        </ul>
-    </div>
+<div className="row">
+<div className="input-group mb-3">
+  <input type="text" className="form-control"
+  onKeyUp={addTarea}
+  />
+  <ul className="list-group">
+  {!!task &&
+                            task.map((elem, index) => {
+                                return (<div className="row" id={index} key={index}>
+                                    <div className="col-11" >{elem.label}</div>
+                                    <div className="col-1"><span className=" far fa-trash-alt" onClick={()=> deleteTask(index)}></span></div>
+                                </div>
+                                )
+                            })
+                        }
+  </ul>
 </div>
-</>
-  );
-};
+  <button className="btn-warning col-md-1 mx-auto pt-2"></button>
+</div>
+
+)
+
+}
 
 export default AddTask;
