@@ -126,24 +126,22 @@ const AddTask = () => {
     setTasks([]);
   }
 
-  return (
+  return (/* 
     <div className="row">
       <div className="input-group input-group-lg">
-        <input type="text" className="form-control" onKeyUp={addtarea} />
-        <ul className="list-group">
+        <ul className="list-group  ">
+        <input type="text" className="form-control list-group-item " onKeyUp={addtarea} />
           {!!task &&
             task.map((elem, index) => {
               return (
-                <div className="row list-group-item d-inline-flex align-items-center" id={index} key={index}>
-                  <div className="col-9">{elem.label}</div>
-                  <div className="col-1 btn">
-                    <span
+                <li className="list-group-item" id={index} key={index}>
+                  <li className="list-group-item"> {elem.label}<span
                     type="button"
-                      className="btn btn-danger  text-end"
+                      className="btn btn-danger ml-3 text-end"
                       onClick={() => deleteTask(index)}
-                    ></span>
-                  </div>
-                </div>
+                    ></span></li>
+                 
+                </li>
               );
             })}
         </ul>
@@ -152,7 +150,26 @@ const AddTask = () => {
         className="btn-warning col-md-1 mx-auto pt-2"
         onClick={deleteAll}
       ></button>
-    </div>
+    </div> */
+    <div className="row">
+      <ul className="list-group col-md-6">
+         <input type="text" className="form-control list-group-item mt-2" onKeyUp={addtarea} />
+         {
+           !!task && task.map((elem,index) => {
+             return (
+              <div className="list-group-item col-md-6" id={index} key={index}>
+                <li className="list-group-itemcol-md-5"> {elem.label} <div className="btn-danger col-1 text-end">a</div></li>
+            
+     
+              </div>
+             )
+             
+           }) 
+         }
+  <li className="list-group-item">A second item</li>
+  
+</ul> 
+</div>
   );
 };
 
